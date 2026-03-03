@@ -1,0 +1,8 @@
+# Talked to claude about recommendations to ignore
+# IntelliJ
+.idea/
+*.iml
+
+# Compiled output
+out/
+*.class
