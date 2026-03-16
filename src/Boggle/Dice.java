@@ -1,7 +1,7 @@
 // found on https://boardgames.stackexchange.com/questions/29264/boggle-what-is-the-dice-configuration-for-boggle-in-various-languages
 // it's worth noting that big boggle or whatever version my family owns, it is a 5x5 grid with some other letter pairs
 // including in, or th, rather than what normal boggle holds which is only a Qu
-
+package src.Boggle;
 import java.util.Arrays;
 import java.util.Random;
 

@@ -5,6 +5,8 @@
  *  3. create boggle bot solver to "play against the bot"
  */
 
+package src.Boggle;
+
 /**
  * Creating Boggle backend
  * 1. create board based on boggle rules with sets of dice, letters, map nodes to connect them, etc.
@@ -13,6 +15,7 @@
  */
 
 import java.util.*;
+
 
 public class Board {
     private Random random; // the board's random generator for its dice and shuffling
@@ -59,9 +62,7 @@ public class Board {
         } else { // random
             // generateRandomBoard
         }
-        System.out.println("Before shuffling board");
         shuffleBoard(); // note that creating the adj list happens in shuffleBoard
-        System.out.println("Shuffled Board");
     }
 
     /**
@@ -127,8 +128,70 @@ public class Board {
         return sb.toString();
     }
 
+    /**
+     * Check if word exists as a valid word to be found on the board
+     * @param word the word a user is attempting
+     * @return true if word is creatable on board, false otherwise
+     */
+    private boolean validateWord(String word) {
+        if (word.length() < 3)
+            return false;
+
+        for (int row = 0; row < this.BOARDSIZE; row++) {
+            for (int col = 0 ; col < this.BOARDSIZE; col++) {
+                Dice currentDie = this.board[row][col];
+                if (dfsForWord(word, currentDie, 0, new HashSet<>()))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * A helper method to find the full word on the board after finding the starting character
+     * @param word - the word we are searching for
+     * @return - true if we find the word, false otherwise
+     */
+    private boolean dfsForWord(String word, Dice currentDie, int index, Set<Dice> visited) {
+        if (index == word.length()) return true;
+        if (visited.contains(currentDie)) return false;
+        if (!currentDie.getFaceUp().equalsIgnoreCase(
+                String.valueOf(word.charAt(index)))) return false;
+
+        visited.add(currentDie);
+
+        for (Dice neighbor : adjList.get(currentDie)) {
+            if (dfsForWord(word, neighbor, index+1, visited)) {
+                return true;
+            }
+        }
+
+        visited.remove(currentDie);
+        return false;
+
+    }
+
+    /**
+     * The method that will call the scoring class to return the score of a word on the board.
+     * @param word - the word to check
+     * @return
+     */
+    public int scoreWord(String word) {
+        if (!validateWord(word)) return 0;
+        else if (!Scoring.findWordInDict(word)) return 0;
+        else return Scoring.calcScore(word);
+    }
+
+
     public static void main(String[] args) {
         Board board = new Board("classic");
         System.out.println(board.toString());
+
+        Scanner input = new Scanner(System.in);
+        while (true) {
+            String word = input.nextLine();
+            System.out.println(board.validateWord(word));
+        }
     }
 }
